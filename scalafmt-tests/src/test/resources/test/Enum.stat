@@ -89,3 +89,31 @@ enum A
     with Epsilon {
   case B
 }
+<<< enum case with parent constructors `never`
+binPack.parentConstructors = Never
+maxColumn = 30
+===
+enum Foo(val x: Int) {
+  case Bar extends Foo(1) with X with Y with Z
+}
+>>>
+enum Foo(val x: Int) {
+  case Bar
+      extends Foo(1)
+      with X
+      with Y
+      with Z
+}
+<<< enum case with parent constructors `always`
+binPack.parentConstructors = Always
+maxColumn = 30
+===
+enum Foo(val x: Int) {
+  case Bar extends Foo(1) with X with Y with Z
+}
+>>>
+enum Foo(val x: Int) {
+  case Bar
+      extends Foo(1) with X
+      with Y with Z
+}
