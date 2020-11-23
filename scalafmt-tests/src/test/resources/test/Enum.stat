@@ -117,3 +117,118 @@ enum Foo(val x: Int) {
       extends Foo(1) with X
       with Y with Z
 }
+<<< enum case with parent constructors `oneline`
+binPack.parentConstructors = Oneline
+maxColumn = 30
+===
+enum Foo(val x: Int) {
+  case Bar extends Foo(1) with Baz
+
+  case Far extends Foo(1) with Faz
+}
+>>>
+enum Foo(val x: Int) {
+  case Bar
+      extends Foo(1) with Baz
+
+  case Far
+      extends Foo(1) with Faz
+}
+<<< ONLY enum case with parent constructors `onelineIfPrimaryOneline`
+binPack.parentConstructors = OnelineIfPrimaryOneline
+maxColumn = 40
+# Bar . with (newline is picked, we need a space)
+# Space:1471(cost=0, indents=[], NoPolicy)
+# Newline:1472(cost=1, indents=[], NoPolicy)
+===
+enum Foo(val a: String, val b: String) {
+  case Bar extends Foo("arg1", "arg2")
+  with Bar with FooBar
+
+  case Far extends Foo(
+    "arg1",
+    "arg2"
+  ) with Bar with FooBar
+}
+>>>
+enum Foo(val a: String, val b: String) {
+  case Bar
+      extends Foo("arg1", "arg2")
+      with Bar with FooBar
+
+  case Far
+      extends Foo(
+        "arg1",
+        "arg2"
+      )
+      with Bar
+      with FooBar
+}
+<<< EXAMPLE
+binPack.parentConstructors = OnelineIfPrimaryOneline
+maxColumn = 30
+# space is picked, the dirrence is that here newline has some policy
+# Space:1454(cost=0, indents=[], NoPolicy)
+# Newline:1455(cost=1, indents=[], 1442>65d)
+===
+object A {
+  class Bar(a: Int, b: Int)
+      extends Foo with Baz
+
+  class Bar(
+    a: Int,
+    b: Int
+  ) extends Foo
+      with Bar
+      with FooBar
+}
+>>>
+object A {
+  class Bar(a: Int, b: Int)
+      extends Foo with Baz
+
+  class Bar(
+      a: Int,
+      b: Int
+  ) extends Foo
+      with Bar
+      with FooBar
+}
+<<< class test
+binPack.parentConstructors = Never
+maxColumn = 30
+===
+object a {
+  class A(x: Int)
+  extends Foo
+  with X
+  with Y
+  with Z
+
+
+  class B(
+    x: Int
+  )
+  extends Foo
+  with X
+  with Y
+  with Z
+}
+>>>
+object a {
+  class A(x: Int)
+      extends Foo with X
+      with Y with Z
+
+  class B(
+      x: Int
+  ) extends Foo with X with Y
+      with Z
+}
+<<< simple test
+maxColumn = 30
+===
+class A extends B with C with D
+>>>
+class A
+    extends B with C with D

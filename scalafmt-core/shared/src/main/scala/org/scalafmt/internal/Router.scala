@@ -1393,9 +1393,14 @@ class Router(formatOps: FormatOps) {
           if rightOwner.isInstanceOf[Defn.EnumCase] =>
         val lastToken = rightOwner.tokens.last
         val enumCase = rightOwner.asInstanceOf[Defn.EnumCase]
+        val policy = Policy.before(lastToken) {
+          case Decision(t @ FormatToken(_, _: T.KwWith, _), splits) =>
+            splits.filter(s => s.isNL)
+        }
         binPackParentConstructorSplits(
           Left(rightOwner),
-          Some(enumCase.inits),
+          // drop extends because it is primary constructor for EnumCase
+          Some(enumCase.inits.drop(1)),
           lastToken,
           style.continuationIndent.extendSite
         )

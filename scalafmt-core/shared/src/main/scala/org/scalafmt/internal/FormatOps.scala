@@ -13,22 +13,7 @@ import org.scalafmt.util.LoggerOps._
 import scala.annotation.tailrec
 import scala.collection.mutable
 import scala.meta.classifiers.Classifier
-import scala.meta.{
-  Case,
-  Ctor,
-  Decl,
-  Defn,
-  Import,
-  Init,
-  Lit,
-  Pat,
-  Pkg,
-  Source,
-  Template,
-  Term,
-  Tree,
-  Type
-}
+import scala.meta.{Case, Ctor, Decl, Defn, Import, Init, Lit, Pat, Pkg, Source, Template, Term, Tree, Type}
 import scala.meta.tokens.Token
 import scala.meta.tokens.{Token => T}
 
