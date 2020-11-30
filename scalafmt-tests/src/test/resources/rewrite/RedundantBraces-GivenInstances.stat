@@ -1,0 +1,25 @@
+rewrite.rules = [RedundantBraces]
+runner.dialect = dotty
+# Space:2199(cost=0, indents=[], NoPolicy, opt=position:45)
+# Newline:2204(cost=1, indents=[2>position:45], NoPolicy)
+<<< ONLY (error in parser?) anonymous alias given + it's not recognized as Defn.GivenAlias
+given Eql[A, B] = {
+    Eql.derived
+}
+>>>
+given Eql[A, B] =
+    Eql.derived
+
+<<< ONLY IDEMP
+given Eql[A, B] =
+  Eql.derived
+>>>
+given Eql[A, B] =
+  Eql.derived
+<<< TEST # Newline:2073(cost=0, indents=[2>position:47], NoPolicy)
+def x(i: Int): Int = {
+  enclosingTree.position
+}
+>>>
+def x(i: Int): Int =
+  enclosingTree.position

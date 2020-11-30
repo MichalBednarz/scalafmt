@@ -1,0 +1,126 @@
+runner.dialect = dotty
+<<< without line break before `as`
+maxColumn = 30
+===
+given intOrd as Ord[Int] {
+  def fn = ()
+}
+>>>
+given intOrd as Ord[Int] {
+  def fn = ()
+}
+<<< with line break before `as`
+maxColumn = 20
+===
+given intOrd as Ord[Int] {
+  def fn = ()
+}
+>>>
+given intOrd
+    as Ord[Int] {
+  def fn = ()
+}
+<<< with using & dangling parens false
+danglingParentheses.defnSite = false
+maxColumn = 25
+===
+given listOrd[T](using ord: Ord[T]) as Ord[List[T]] {}
+>>>
+given listOrd[T](
+    using ord: Ord[T])
+    as Ord[List[T]] {}
+<<< with using & excluded parens
+maxColumn = 25
+danglingParentheses.exclude = [given]
+===
+given listOrd[T](using ord: Ord[T]) as Ord[List[T]] {}
+>>>
+given listOrd[T](
+    using ord: Ord[T])
+    as Ord[List[T]] {}
+<<< with using & dangling parens true
+danglingParentheses.defnSite = true
+maxColumn = 25
+===
+given listOrd[T](using ord: Ord[T]) as Ord[List[T]] {}
+>>>
+given listOrd[T](
+    using ord: Ord[T]
+) as Ord[List[T]] {}
+<<< SKIP (wait for indent support in parser) alias givens
+maxColumn = 20
+===
+given Eql[A, B] = Eql.derived
+>>>
+given Eql[A, B] =
+  Eql.derived
+<<< SKIP (wait for indent support in parser) alias givens with as
+maxColumn = 20
+===
+given global as ExecutionContext = new ForkJoinPool()
+>>>
+given global
+    as ExecutionContext =
+  new ForkJoinPool()
+<<< SKIP (wait for indent support in parser) anonymous alias givens
+maxColumn = 20
+===
+given Position = enclosingTree.position
+>>>
+given Position =
+  enclosingTree.position
+<<< SKIP (wait for indent support in parser) anonymous alias givens with using
+maxColumn = 30
+===
+given (using config: Config) as Factory = MemoizingFactory(config)
+>>>
+given (using config: Config)
+    as Factory =
+  MemoizingFactory(config)
+<<< anonymous givens
+maxColumn = 20
+===
+given Ord[Int] {}
+>>>
+given Ord[Int] {}
+<<< anonymous given with using
+maxColumn = 25
+===
+given [T](using Ord[T]) as Ord[List[T]] {}
+>>>
+given [T](using Ord[T])
+    as Ord[List[T]] {}
+<<< SKIP (wait for using support) anonymous given with using (newline before using)
+maxColumn = 20
+===
+given [T](using Ord[T]) as Ord[List[T]] {}
+>>>
+given [T](
+    using Ord[T]
+) as Ord[List[T]] {}
+<<< SKIP (wait for modifiers and macros support) given macros
+maxColumn = 30
+===
+transparent inline given mkAnnotations[A, T] as Annotations[A, T] = ${
+  // code producing a value of a subtype of Annotations
+}
+>>>
+transparent inline given mkAnnotations[A, T] as Annotations[A, T] = ${
+  // code producing a value of a subtype of Annotations
+}
+<<< SKIP (wait for parser support) pattern-bound given instance with for comprehension
+maxColumn = 30
+===
+for given Context <- applicationContexts do
+>>>
+for given Context <- applicationContexts do
+<<< SKIP (wait for parser support) pattern-bound given instance with match case
+maxColumn = 40
+===
+pair match {
+case (ctx as given Context, y) =>
+}
+>>>
+pair match {
+  case (ctx as given Context, y) =>
+}

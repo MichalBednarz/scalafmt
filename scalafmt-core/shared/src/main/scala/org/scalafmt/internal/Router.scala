@@ -126,7 +126,7 @@ class Router(formatOps: FormatOps) {
           Split(NoSplit, 0)
         )
       // Import
-      case FormatToken(_: T.Dot, _: T.LeftBrace | _: T.Underscore, _)
+      case FormatToken(_: T.Dot, _: T.LeftBrace | _: T.Underscore | _: T.KwGiven, _)
           if existsParentOfType[Import](rightOwner) =>
         Seq(Split(NoSplit, 0))
       // Import left brace
@@ -555,6 +555,17 @@ class Router(formatOps: FormatOps) {
         }
         Seq(
           Split(modification, 0)
+        )
+      // Defn Given
+      case FormatToken(_, T.Ident("as"), _)  if rightOwner.isInstanceOf[Defn.Given] || rightOwner.isInstanceOf[Defn.GivenAlias] =>
+        val expire = rightOwner match {
+          case _: Defn.Given => rightOwner.tokens.find(_.isInstanceOf[T.LeftBrace])
+          case _: Defn.GivenAlias => rightOwner.tokens.find(_.isInstanceOf[T.Equals])
+        }
+        Seq(
+          Split(Space, 0),
+          Split(Newline, 1)
+            .withIndent(style.continuationIndent.extendSite, expire.get, After)
         )
       // Defn.{Object, Class, Trait}
       case FormatToken(_: T.KwObject | _: T.KwClass | _: T.KwTrait, r, _) =>
@@ -1752,7 +1763,23 @@ class Router(formatOps: FormatOps) {
             Split(Newline, if (spaceSplit.isActive) 1 else 0)
           )
         }
-
+      case FormatToken(_: T.KwGiven, _, _)
+        if !style.binPack.unsafeDefnSite &&
+          !style.verticalMultiline.atDefnSite =>
+        opensImplicitParamList(prevNonComment(prev(formatToken))).fold {
+          Seq(Split(Space, 0))
+        } { params =>
+          val spaceSplit = Split(Space, 0)
+            .notIf(style.newlines.forceAfterImplicitParamListModifier)
+            .withPolicy(
+              SingleLineBlock(params.last.tokens.last),
+              style.newlines.notPreferAfterImplicitParamListModifier
+            )
+          Seq(
+            spaceSplit,
+            Split(Newline, if (spaceSplit.isActive) 1 else 0)
+          )
+        }
       case FormatToken(_, r, _) if optionalNewlines(hash(r)) =>
         def noAnnoLeft =
           leftOwner.is[Mod] ||

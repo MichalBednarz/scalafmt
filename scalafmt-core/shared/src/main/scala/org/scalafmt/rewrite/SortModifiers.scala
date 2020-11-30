@@ -39,6 +39,8 @@ class SortModifiers(implicit ctx: RewriteCtx) extends RewriteSession {
       case c: Defn.Class => sortMods(c.mods.filterNot(_.is[Mod.Case]))
       case o: Defn.Object => sortMods(o.mods.filterNot(_.is[Mod.Case]))
       case t: Defn.Trait => sortMods(t.mods)
+      case g: Defn.Given => sortMods(g.mods)
+      case g: Defn.GivenAlias => sortMods(g.mods)
       case p: Term.Param =>
         sortMods(
           p.mods.filterNot(m => m.is[Mod.ValParam] || m.is[Mod.VarParam])

@@ -138,6 +138,8 @@ object TreeOps {
         case t: Decl.Def => addDefn[KwDef](t.mods, t)
         case t: Defn.Object => addDefn[KwObject](t.mods, t)
         case t: Defn.Trait => addDefn[KwTrait](t.mods, t)
+        case t: Defn.Given => addDefn[KwGiven](t.mods, t)
+        case t: Defn.GivenAlias => addDefn[KwGiven](t.mods, t)
         case t: Defn.Type => addDefn[KwType](t.mods, t)
         case t: Decl.Type => addDefn[KwType](t.mods, t)
         case t: Defn.Val => addDefn[KwVal](t.mods, t)
@@ -291,7 +293,7 @@ object TreeOps {
       case _ => None
     }
 
-  /** Returns `true` if the `scala.meta.Tree` is a class, trait or def
+  /** Returns `true` if the `scala.meta.Tree` is a class, trait, given or def
     *
     * For classes this includes primary and secondary Ctors.
     */
@@ -314,7 +316,7 @@ object TreeOps {
     tree match {
       case _: Decl.Def | _: Defn.Def | _: Defn.Macro | _: Defn.Class |
           _: Defn.Trait | _: Ctor.Secondary | _: Decl.Type | _: Defn.Type |
-          _: Type.Apply | _: Type.Param | _: Type.Tuple =>
+          _: Type.Apply | _: Type.Param | _: Type.Tuple | _: Defn.Given =>
         true
       case _: Term.Function | _: Type.Function => true
       case x: Ctor.Primary => x.parent.exists(isDefnSite)
@@ -414,6 +416,7 @@ object TreeOps {
     case t: Decl.Def => (t.mods, t.name, t.tparams, t.paramss)
     case t: Defn.Class => (t.mods, t.name, t.tparams, t.ctor.paramss)
     case t: Defn.Trait => (t.mods, t.name, t.tparams, t.ctor.paramss)
+    case t: Defn.Given => (t.mods, t.name, t.tparams, Seq.empty)
     case t: Ctor.Primary => (t.mods, t.name, Seq.empty, t.paramss)
     case t: Ctor.Secondary => (t.mods, t.name, Seq.empty, t.paramss)
   }
@@ -444,6 +447,7 @@ object TreeOps {
     tree match {
       case t: Defn.Def => Some(t.body)
       case t: Defn.Macro => Some(t.body)
+      case t: Defn.GivenAlias => Some(t.body)
       case t: Ctor.Secondary => Some(t.init)
       case _ => None
     }
@@ -576,6 +580,7 @@ object TreeOps {
             DanglingParentheses.Exclude.`class`
           case _: Defn.Trait => DanglingParentheses.Exclude.`trait`
           case _: Defn.Def => DanglingParentheses.Exclude.`def`
+          case _: Defn.Given | _: Defn.GivenAlias => DanglingParentheses.Exclude.`given`
           case _ => null
         }
         null != exclude && excludeList.contains(exclude)

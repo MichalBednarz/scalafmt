@@ -865,6 +865,8 @@ class FormatWriter(formatOps: FormatOps) {
             case p: Defn.Def => Some(p.body)
             case p: Defn.Val => Some(p.rhs)
             case p: Defn.Trait => Some(p.templ)
+            case p: Defn.Given => Some(p.templ)
+            case p: Defn.GivenAlias => Some(p.body)
             case p: Defn.Class => Some(p.templ)
             case p: Defn.Object => Some(p.templ)
             case _ => None

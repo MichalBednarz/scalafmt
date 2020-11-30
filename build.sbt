@@ -35,6 +35,7 @@ inThisBuild(
     scalaVersion := scala213,
     crossScalaVersions := List(scala213, scala212, scala211),
     resolvers += Resolver.sonatypeRepo("releases"),
+    resolvers += Resolver.sonatypeRepo("snapshots"),
     libraryDependencies ++= List(
       scalatest.value % Test,
       scalacheck % Test,
